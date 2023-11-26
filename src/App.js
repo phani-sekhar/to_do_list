@@ -18,10 +18,24 @@ function Logo() {
   return <h1>Far Away 🚗 </h1>;
 }
 function Form() {
+  function handleSubmit(e) {
+    e.preventDefault(); //prevents the reloading of page on submit
+    console.log(e);
+  }
+
   return (
-    <div className="add-form">
+    <form className="add-form" onSubmit={handleSubmit}>
       <h3>What do you need?</h3>
-    </div>
+      <select>
+        {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
+          <option value={num} key={num}>
+            {num}
+          </option>
+        ))}
+      </select>
+      <input type="text" placeholder="Item" />
+      <button>Add</button>
+    </form>
   );
 }
 function PackingLists() {
@@ -29,7 +43,7 @@ function PackingLists() {
     <div className="list">
       <ul>
         {initialItems.map((item) => (
-          <Item item={item} />
+          <Item item={item} key={item.id} />
         ))}
       </ul>
     </div>
