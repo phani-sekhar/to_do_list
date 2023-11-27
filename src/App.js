@@ -1,13 +1,9 @@
 import { useState } from "react";
 
-// const initialItems = [
-//   { id: 1, description: "Passports", quantity: 2, packed: false },
-//   { id: 2, description: "Socks", quantity: 12, packed: false },
-//   { id: 3, description: "Charger", quantity: 1, packed: true },
-// ];
-
 export default function App() {
+  // For items calculation
   const [items, setItems] = useState([]);
+
   // Adding new items
   function handleAddItems(item) {
     setItems((items) => [...items, item]);
@@ -17,9 +13,11 @@ export default function App() {
     setItems((items) => items.filter((item) => item.id !== id));
   }
   // Checking the item
-  function handleToggleItem() {
+  function handleToggleItem(id) {
     setItems((items) =>
-      items.map((item) => (item.id ? { ...item, packed: !item.packed } : item))
+      items.map((item) =>
+        item.id === id ? { ...item, packed: !item.packed } : item
+      )
     );
   }
 
@@ -32,7 +30,7 @@ export default function App() {
         onDeleteItem={handleDeleteItems}
         onToggleitem={handleToggleItem}
       />
-      <Stats />
+      <Stats items={items} />
     </div>
   );
 }
@@ -101,17 +99,29 @@ function Item({ item, onDeleteItem, onToggleitem }) {
         onChange={() => onToggleitem(item.id)}
       />
       <span style={item.packed ? { textDecoration: "line-through" } : {}}>
-        {item.quantity}&nbsp;
-        {item.description}
+        {item.quantity} {item.description}
       </span>
       <button onClick={() => onDeleteItem(item.id)}>❌</button>
     </li>
   );
 }
-function Stats() {
+function Stats({ items }) {
+  if (!items.length)
+    return (
+      <p className="stats">
+        <em>Start adding the list</em>
+      </p>
+    );
+  const numItems = items.length;
+  const numPacked = items.filter((item) => item.packed).length;
+  const percentage = Math.round((numPacked / numItems) * 100);
   return (
     <footer className="stats">
-      <em>You have X items on your list, and you already packed X (X%)</em>
+      <em>
+        {percentage === 100
+          ? "All the tasks are completed. Just relax..!"
+          : ` You have ${numItems} items on your list, and you already packed ${numPacked} (${percentage}%)`}
+      </em>
     </footer>
   );
 }
